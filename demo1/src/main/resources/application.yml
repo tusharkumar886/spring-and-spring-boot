@@ -1,0 +1,7 @@
+spring:
+  port: 8080
+
+logging:
+  level:
+    com.oreilly.demo1: info
+    web: debug

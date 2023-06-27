@@ -1,4 +1,4 @@
 spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
-
+#googleAPIKey: AIzaSyBBoFTLVy7VuxPNrNUNVaY4-lx-ZEzaWpo

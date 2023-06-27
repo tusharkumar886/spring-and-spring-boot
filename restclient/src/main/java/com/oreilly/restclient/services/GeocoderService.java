@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public class GeocoderService {
 
     public static final String BASE_URL = "https://maps.googleapis.com";
-    private static final String KEY = "AIzaSyBBoFTLVy7VuxPNrNUNVaY4-lx-ZEzaWpo";
+    private static final String KEY = "";
 
     private final WebClient client = WebClient.create(BASE_URL);
 

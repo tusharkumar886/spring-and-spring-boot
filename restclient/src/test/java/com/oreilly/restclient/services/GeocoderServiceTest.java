@@ -18,6 +18,7 @@ class GeocoderServiceTest {
         GeocodeResponse response = geocoderService.getLatLong("Delhi");
         assertAll(
                 () -> assertEquals("OK", response.status()),
+                () -> assertEquals("Delhi, India", response.results().get(0).formattedAddress()),
                 () -> assertEquals(28.70, response.results().get(0).geometry().location().latitude(), 0.01),
                 () -> assertEquals(77.10, response.results().get(0).geometry().location().longitude(), 0.01)
         );

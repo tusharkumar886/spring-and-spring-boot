@@ -47,6 +47,7 @@ public class AstroService {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(AstroResponse.class)
+                .log()
                 .block(Duration.ofSeconds(2));
     }
 

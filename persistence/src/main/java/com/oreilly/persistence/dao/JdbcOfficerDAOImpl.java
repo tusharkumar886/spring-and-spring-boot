@@ -5,9 +5,13 @@ import com.oreilly.persistence.entities.Rank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.lang.constant.Constable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -44,11 +48,17 @@ public class JdbcOfficerDAOImpl implements OfficerDAO {
 
     @Override
     public Officer save(Officer officer) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("rank", officer.getRank());
-        params.put("first_name", officer.getFirstName());
-        params.put("last_name", officer.getLastName());
-        Integer newId = (Integer) jdbcInsert.executeAndReturnKey(params);
+//        var params = Map.ofEntries(
+//                Map.entry("rank", officer.getRank()),
+//                Map.entry("first_name", officer.getFirstName()),
+//                Map.entry("last_name", officer.getLastName())
+//        );
+//        SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
+//                .addValue("rank", officer.getRank())
+//                .addValue("first_name", officer.getFirstName())
+//                .addValue("last_name", officer.getLastName());
+        SqlParameterSource beanPropertySqlParameterSource = new BeanPropertySqlParameterSource(officer);
+        Integer newId = (Integer) jdbcInsert.executeAndReturnKey(beanPropertySqlParameterSource);
         officer.setId(newId);
         return officer;
     }

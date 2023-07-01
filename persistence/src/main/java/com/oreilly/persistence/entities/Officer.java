@@ -12,6 +12,12 @@ public class Officer {
 
     }
 
+    public Officer(Rank rank, String firstName, String lastName) {
+        this.rank = rank;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public Officer(Integer id, Rank rank, String firstName, String lastName) {
         this.id = id;
         this.rank = rank;

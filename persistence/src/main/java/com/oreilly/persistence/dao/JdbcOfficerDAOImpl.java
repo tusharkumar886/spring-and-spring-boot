@@ -5,11 +5,14 @@ import com.oreilly.persistence.entities.Rank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -19,25 +22,35 @@ public class JdbcOfficerDAOImpl implements OfficerDAO {
     private final RowMapper<Officer> officerRowMapper =
             ((rs, rowNum) -> new Officer(rs.getInt("id"),
                     Rank.valueOf(rs.getString("rank")),
-                    rs.getString("firstName"),
-                    rs.getString("lastName")));
+                    rs.getString("first_name"),
+                    rs.getString("last_name")));
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public JdbcOfficerDAOImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("officers")
+                .usingGeneratedKeyColumns("id");
     }
 
     private static Officer mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new Officer(rs.getInt("id"),
                 Rank.valueOf(rs.getString("rank")),
-                rs.getString("firstName"),
-                rs.getString("lastName"));
+                rs.getString("first_name"),
+                rs.getString("last_name"));
     }
 
     @Override
     public Officer save(Officer officer) {
-        return null;
+        Map<String, Object> params = new HashMap<>();
+        params.put("rank", officer.getRank());
+        params.put("first_name", officer.getFirstName());
+        params.put("last_name", officer.getLastName());
+        Integer newId = (Integer) jdbcInsert.executeAndReturnKey(params);
+        officer.setId(newId);
+        return officer;
     }
 
     @Override

@@ -17,39 +17,39 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class JdbcOfficerDAOImplTest {
+class OfficerRepositoryTest {
 
     @Autowired
-    private JdbcOfficerDAOImpl officerDAO;
+    private OfficerRepository repository;
 
     @Test
     void save() {
         Officer officer = new Officer(Rank.LIEUTENANT, "Nyota", "Uhuru");
-        officer = officerDAO.save(officer);
+        officer = repository.save(officer);
         assertNotNull(officer.getId());
     }
 
     @Test
     void findByIdThatExists() {
-        Optional<Officer> officer = officerDAO.findById(1);
+        Optional<Officer> officer = repository.findById(1);
         assertTrue(officer.isPresent());
         assertEquals(1, officer.get().getId().intValue());
     }
 
     @Test
     void findByIdThatDoesNotExist() {
-        Optional<Officer> officer = officerDAO.findById(999);
+        Optional<Officer> officer = repository.findById(999);
         assertFalse(officer.isPresent());
     }
 
     @Test
     void count() {
-        assertEquals(5, officerDAO.count());
+        assertEquals(5, repository.count());
     }
 
     @Test
     void findAll() {
-        List<String> dbNames = officerDAO.findAll().stream()
+        List<String> dbNames = repository.findAll().stream()
                 .map(Officer::getLastName)
                 .collect(Collectors.toList());
         assertThat(dbNames).contains("Kirk", "Picard", "Sisko", "Janeway", "Archer");
@@ -59,16 +59,16 @@ class JdbcOfficerDAOImplTest {
     void delete() {
         IntStream.rangeClosed(1, 5)
                 .forEach(id -> {
-                    Optional<Officer> officer = officerDAO.findById(id);
+                    Optional<Officer> officer = repository.findById(id);
                     assertTrue(officer.isPresent());
-                    officerDAO.delete(officer.get());
+                    repository.delete(officer.get());
                 });
-        assertEquals(0, officerDAO.count());
+        assertEquals(0, repository.count());
     }
 
     @Test
     void existsById() {
         IntStream.rangeClosed(1, 5)
-                .forEach(id -> assertTrue(officerDAO.existsById(id)));
+                .forEach(id -> assertTrue(repository.existsById(id)));
     }
 }

@@ -6,21 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import java.lang.constant.Constable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-@SuppressWarnings("ConstantConditions")
 @Repository
 public class JdbcOfficerDAOImpl implements OfficerDAO {
     private final RowMapper<Officer> officerRowMapper =
@@ -48,15 +43,17 @@ public class JdbcOfficerDAOImpl implements OfficerDAO {
 
     @Override
     public Officer save(Officer officer) {
-//        var params = Map.ofEntries(
-//                Map.entry("rank", officer.getRank()),
-//                Map.entry("first_name", officer.getFirstName()),
-//                Map.entry("last_name", officer.getLastName())
-//        );
-//        SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
-//                .addValue("rank", officer.getRank())
-//                .addValue("first_name", officer.getFirstName())
-//                .addValue("last_name", officer.getLastName());
+/*
+        var params = Map.ofEntries(
+                Map.entry("rank", officer.getRank()),
+                Map.entry("first_name", officer.getFirstName()),
+                Map.entry("last_name", officer.getLastName())
+        );
+        SqlParameterSource sqlParameterSource = new MapSqlParameterSource()
+                .addValue("rank", officer.getRank())
+                .addValue("first_name", officer.getFirstName())
+                .addValue("last_name", officer.getLastName());
+*/
         SqlParameterSource beanPropertySqlParameterSource = new BeanPropertySqlParameterSource(officer);
         Integer newId = (Integer) jdbcInsert.executeAndReturnKey(beanPropertySqlParameterSource);
         officer.setId(newId);
@@ -91,7 +88,7 @@ public class JdbcOfficerDAOImpl implements OfficerDAO {
 
     @Override
     public boolean existsById(Integer id) {
-        return jdbcTemplate.queryForObject("SELECT 1 FROM officers WHERE id=?",
-                Boolean.class, id);
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject("SELECT 1 FROM officers WHERE id=?",
+                Boolean.class, id));
     }
 }

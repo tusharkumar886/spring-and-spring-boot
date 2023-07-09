@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+// every test runs inside a "required" transaction,
+//    which is rolled back at the end of each test
 class JdbcOfficerDAOImplTest {
 
     @Autowired

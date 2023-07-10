@@ -5,12 +5,12 @@ import com.oreilly.persistence.entities.Rank;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +22,14 @@ class OfficerRepositoryTest {
     @Autowired
     private OfficerRepository repository;
 
+    @Autowired
+    private JdbcTemplate template;
+
+    private List<Integer> getIds() {
+        return template.query("select id from officers",
+                (rs, rowNum) -> rs.getInt("id"));
+    }
+
     @Test
     void save() {
         Officer officer = new Officer(Rank.LIEUTENANT, "Nyota", "Uhuru");
@@ -31,20 +39,22 @@ class OfficerRepositoryTest {
 
     @Test
     void findByIdThatExists() {
-        Optional<Officer> officer = repository.findById(1);
+        int id = getIds().get(0);
+        Optional<Officer> officer = repository.findById(id);
         assertTrue(officer.isPresent());
         assertEquals(1, officer.get().getId().intValue());
     }
 
     @Test
     void findByIdThatDoesNotExist() {
+        assertThat(getIds()).doesNotContain(999);
         Optional<Officer> officer = repository.findById(999);
         assertFalse(officer.isPresent());
     }
 
     @Test
     void count() {
-        assertEquals(5, repository.count());
+        assertEquals(getIds().size(), repository.count());
     }
 
     @Test
@@ -57,18 +67,16 @@ class OfficerRepositoryTest {
 
     @Test
     void delete() {
-        IntStream.rangeClosed(1, 5)
-                .forEach(id -> {
-                    Optional<Officer> officer = repository.findById(id);
-                    assertTrue(officer.isPresent());
-                    repository.delete(officer.get());
-                });
+        getIds().forEach(id -> {
+            Optional<Officer> officer = repository.findById(id);
+            assertTrue(officer.isPresent());
+            repository.delete(officer.get());
+        });
         assertEquals(0, repository.count());
     }
 
     @Test
     void existsById() {
-        IntStream.rangeClosed(1, 5)
-                .forEach(id -> assertTrue(repository.existsById(id)));
+        getIds().forEach(id -> assertTrue(repository.existsById(id)));
     }
 }

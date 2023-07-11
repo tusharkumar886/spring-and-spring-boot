@@ -79,4 +79,18 @@ class OfficerRepositoryTest {
     void existsById() {
         getIds().forEach(id -> assertTrue(repository.existsById(id)));
     }
+
+    @Test
+    void findByRank() {
+        repository.findByRank(Rank.CAPTAIN).forEach(captain -> assertEquals(Rank.CAPTAIN, captain.getRank()));
+    }
+
+    @Test
+    void findAllByLastNameLikeAndRank() {
+        List<Officer> officers = repository.findAllByLastNameLikeAndRank("%i%", Rank.CAPTAIN);
+        assertThat(officers).extracting(Officer::getRank).containsOnly(Rank.CAPTAIN);
+        assertThat(officers).extracting(Officer::getLastName).allMatch(n -> n.contains("i"));
+        System.out.println(officers);
+        assertEquals(3, officers.size());
+    }
 }

@@ -42,8 +42,8 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> findAllByPriceGreaterThanEqual(BigDecimal minPrice) {
-        return productRepository.findAllByPriceGreaterThanEqual(minPrice);
+    public List<Product> findAllByPriceGreaterThanEqual(double minPrice) {
+        return productRepository.findAllByPriceGreaterThanEqual(BigDecimal.valueOf(minPrice));
     }
 
     public Product saveProduct(Product product) {

@@ -1,9 +1,11 @@
 package com.oreilly.shopping.controllers;
 
 import com.oreilly.shopping.entities.Product;
+import com.oreilly.shopping.exceptions.ProductMinimumPriceException;
 import com.oreilly.shopping.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.server.WebServerException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,6 +25,7 @@ public class ProductRestController {
     }
 
     @GetMapping
+    @CrossOrigin
     public ResponseEntity<List<Product>> getProducts() {
 //        return new ResponseEntity<>(productService.findAllProducts(), HttpStatus.OK);
         return ResponseEntity.ok(productService.findAllProducts());
@@ -31,6 +34,13 @@ public class ProductRestController {
     @GetMapping("{id}")
     public ResponseEntity<Product> getProduct(@PathVariable(name = "id") Long id) {
         return ResponseEntity.of(productService.findProductById(id));
+    }
+
+    @GetMapping(params = "minPrice")
+    public ResponseEntity<List<Product>> getProductByMinPrice(@RequestParam(defaultValue = "0.0") double minPrice) {
+        if(minPrice <0)
+            throw new ProductMinimumPriceException(minPrice);
+        return ResponseEntity.ok(productService.findAllByPriceGreaterThanEqual(minPrice));
     }
 
     @PostMapping

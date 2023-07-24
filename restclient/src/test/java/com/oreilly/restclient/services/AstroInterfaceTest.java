@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -18,7 +19,7 @@ class AstroInterfaceTest {
         AstroResponse response = astroInterface.getAstroResponse();
         assertAll(
                 () -> assertNotNull(response),
-                () -> assertTrue(response.number().intValue() >= 0),
+                () -> assertThat(response.number().intValue()).isPositive(),
                 () -> assertSame(response.number(), response.people().size()),
                 () -> assertEquals("success", response.message())
         );
